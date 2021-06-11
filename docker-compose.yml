@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+  chiad:
+    image: epaypool/chia-harvester
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        - BRANCH=latest

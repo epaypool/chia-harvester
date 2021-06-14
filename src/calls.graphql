@@ -1,0 +1,9 @@
+mutation addHarvesterPlots($data: InputPlots!) {
+  addHarvesterPlots(data: $data) {
+    created_at
+    file_size
+    filename
+    plot_public_key
+    updated_at
+  }
+}

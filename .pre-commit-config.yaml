@@ -1,0 +1,102 @@
+fail_fast: true
+repos:
+  - repo: https://github.com/pre-commit/mirrors-prettier.git
+    rev: v2.3.0
+    hooks:
+      - id: prettier
+        name: prettier https://prettier.io/docs/en/ .
+        args: [--single-quote] #list of args like '--single-quote', '--jsx-bracket-same-line', '--print-width 120', '--no-bracket-spacing'
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.27.0 # Use the sha / tag you want to point at
+    hooks:
+      - id: eslint
+        name: eslint typescript https://github.com/eslint/eslint .
+        files: \.[t]sx?$
+        types: [file]
+        args: [--fix, --max-warnings=0, --format, unix]
+        additional_dependencies:
+          - eslint
+          - jest
+          - eslint-plugin-tsc
+          - typescript
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v7.27.0 # Use the sha / tag you want to point at
+    hooks:
+      - id: eslint
+        name: eslint tsc https://www.npmjs.com/package/eslint-plugin-tsc .
+        files: ^api/.*\.[t]s?$
+        types: [file]
+        # https://github.com/unlight/eslint-plugin-tsc/issues/3
+        args:
+          [
+            --fix,
+            --max-warnings=0,
+            --format,
+            unix,
+            --plugin,
+            tsc,
+            --rule,
+            'tsc/config: [2, {configFile: "api/tsconfig.json"}]',
+          ]
+        additional_dependencies:
+          - eslint
+          - jest
+          - eslint-plugin-tsc
+          - typescript
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1 # Use the ref you want to point at
+    hooks:
+      - id: end-of-file-fixer
+        exclude: ^.idea/
+        name: Fix End of Files https://github.com/pre-commit/pre-commit-hooks#end-of-file-fixer .
+      - id: trailing-whitespace
+        name: Trim Trailing Whitespace https://github.com/pre-commit/pre-commit-hooks#trailing-whitespace .
+      - id: check-added-large-files
+        name: Check large files maxkb=3000  https://github.com/pre-commit/pre-commit-hooks#check-added-large-files .
+        args: [--maxkb=3000]
+        exclude: ^(.*package-lock\.json)$
+      - id: check-yaml
+        name: Check Yaml https://github.com/pre-commit/pre-commit-hooks#check-yaml .
+        args: [--allow-multiple-documents]
+      - id: check-case-conflict
+        name: Check for case conflicts https://github.com/pre-commit/pre-commit-hooks#check-case-conflict .
+      - id: check-executables-have-shebangs
+        name: Check that executables have shebangs  https://github.com/pre-commit/pre-commit-hooks#check-executables-have-shebangs .
+      - id: check-merge-conflict
+        name: Check for merge conflicts https://github.com/pre-commit/pre-commit-hooks#check-merge-conflict .
+      #      - id: check-symlinks
+      #      - id: check-vcs-permalinks
+      #      - id: detect-private-key
+      - id: mixed-line-ending
+        name: Mixed line ending https://github.com/pre-commit/pre-commit-hooks#mixed-line-ending .
+  #      - id: no-commit-to-branch
+  #        args: [--branch, master, --branch, dev]
+  #- repo: https://github.com/pre-commit/mirrors-csslint
+  #  rev: v1.0.5
+  #  hooks:
+  #    - id: csslint
+  #  - repo: https://github.com/pre-commit/mirrors-scss-lint
+  #    rev: v0.59.0
+  #    hooks:
+  #      - id: scss-lint
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 2.1.5
+    hooks:
+      - id: forbid-binary
+        name: Forbid binaries https://github.com/jumanjihouse/pre-commit-hooks#forbid-binary .
+        exclude: ^(.*\.ico|.*\.icns|.*\.png)$
+      #      - id: git-check # Configure in .gitattributes
+      #        name: Check for conflict markers and core.whitespace errors https://github.com/jumanjihouse/pre-commit-hooks#git-check .
+      - id: markdownlint # Configure in .mdlrc
+        name: Check markdown files https://github.com/jumanjihouse/pre-commit-hooks#markdownlint .
+        args: [-r, '~MD013,~MD004']
+      - id: require-ascii
+        exclude: ^(web/src/locales/.*|next-web/public/locales/.*)$
+        name: Check file encoding https://github.com/jumanjihouse/pre-commit-hooks#require-ascii .
+  #      - id: shellcheck
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
+    rev: v1.1.0
+    hooks:
+      #      - id: dockerfile_lint
+      - id: markdown-toc
+        args: ['--bullets', '+', '-i']

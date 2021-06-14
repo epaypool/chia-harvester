@@ -1,0 +1,19 @@
+hooks:
+  afterAllFileWrite:
+    - prettier --write
+#schema: http://localhost:8888/graphql
+schema: https://xcht.epaypool.com/graphql
+generates:
+  ./src/generated.graphql.ts:
+    documents: 'src/*.{graphql,tsx}'
+    config:
+      useIndexSignature: true
+      avoidOptionals: false
+      maybeValue: T | undefined
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-graphql-request
+  ./generated.graphql:
+    plugins:
+      - schema-ast

@@ -1,0 +1,7 @@
+{
+  "extends": ["@epaypool/eslint-config-ts"],
+  "rules": {
+    "import/no-named-as-default": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0
+  }
+}

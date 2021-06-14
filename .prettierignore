@@ -1,0 +1,10 @@
+tsconfig.json
+.prettierignore
+.env
+.gitignore
+yarn.lock
+package-lock.json
+.idea/
+.snyk
+.dockerignore
+Dockerfile

@@ -1,0 +1,10 @@
+{
+  "name": "GraphQL Schemas with Shared Types",
+  "projects": {
+    "chia-plots-monitor": {
+      "includes": [
+        "generated.graphql"
+      ]
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "name": "@epaypool/chia-plots-monitor",
+  "description": "Monitor chia plots in database",
+  "author": "Eapypool Admin <info@epaypool.com>",
+  "license": "MIT",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf node_modules dist python_modules src/generated.graphql.ts generated.graphql",
+    "codegen": "graphql-codegen",
+    "dev": "cross-env NODE_ENV=development DEBUG=epaypool:* ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "cross-env NODE_ENV=development DEBUG=epaypool:* ts-node-dev --transpile-only src/index.ts",
+    "docker-build": "docker build .",
+    "lint": "nopenv pre-commit run --all-files",
+    "lint-staged": "lint-staged",
+    "setup": "npip install && husky install && graphql-codegen"
+  },
+  "dependencies": {
+    "@epaypool/chia-client": "^1.0.2",
+    "@sentry/node": "^6.7.0",
+    "@sentry/tracing": "^6.7.0",
+    "crypto": "^1.0.1",
+    "debug": "^4.3.1",
+    "graphql-request": "^3.4.0",
+    "graphql-tag": "^2.12.4",
+    "keycloak-admin": "^1.14.17",
+    "node-fetch": "^2.6.1",
+    "ts-dotenv": "^0.8.3"
+  },
+  "devDependencies": {
+    "@epaypool/eslint-config-ts": "^1.0.4",
+    "@graphql-codegen/cli": "^1.21.5",
+    "@graphql-codegen/introspection": "1.18.2",
+    "@graphql-codegen/schema-ast": "^1.18.3",
+    "@graphql-codegen/typescript": "1.22.1",
+    "@graphql-codegen/typescript-graphql-request": "^3.2.1",
+    "@graphql-codegen/typescript-operations": "^1.18.0",
+    "@types/debug": "^4.1.5",
+    "@types/knex": "^0.16.1",
+    "@types/node": "^15.12.2",
+    "@types/node-fetch": "^2.5.10",
+    "cross-env": "^7.0.3",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "nopy": "^0.2.7",
+    "prettier": "^2.3.1",
+    "rimraf": "^3.0.2",
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^4.3.2"
+  },
+  "engines": {
+    "node": ">=15",
+    "npm": ">=7"
+  },
+  "lint-staged": {
+    "*": [
+      "nopenv pre-commit run --files"
+    ]
+  },
+  "python": {
+    "execPath": [
+      "python3",
+      "python"
+    ],
+    "dependencies": {
+      "pre-commit": ">=2.0"
+    }
+  }
+}

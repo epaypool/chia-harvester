@@ -61,8 +61,8 @@ sed -i 's/xch_target_address: .*/xch_target_address: txch1z9ne4kgxwwuusfgsqx5s74
 
 chia start harvester 2>&1 &
 
+# give time to startup chia harvester
+sleep 60
 tail -f ~/.chia/mainnet/log/debug.log &
 
-# give time to startup chia harvester
-sleep 30
 node ./monitor/dist/index.js

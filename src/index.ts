@@ -2,6 +2,7 @@ import { Connection, Harvester, Message, SERVICE } from '@epaypool/chia-client';
 import { getChiaConfig } from '@epaypool/chia-client/dist/src/ChiaNodeUtils';
 // import * as Sentry from '@sentry/node';
 import * as crypto from 'crypto';
+import Debug from 'debug';
 import * as fs from 'fs';
 import { readFileSync } from 'fs';
 import { GraphQLClient } from 'graphql-request';
@@ -9,6 +10,8 @@ import KcAdminClient from 'keycloak-admin';
 import { env, loadEnv } from './env';
 import { getSdk, InputPlot, InputPlots } from './generated.graphql';
 import { logger } from './logger';
+
+const debug = Debug('epaypool:index.ts');
 
 // if (process.env.NODE_ENV === 'production')
 // {
@@ -76,9 +79,9 @@ async function processPlots(harvester_key: string, monitor: Harvester) {
   if (url === '') {
     const chiaConfig = getChiaConfig(env.CHIA_ROOT);
     if (chiaConfig.selected_network === 'mainnet') {
-      url = 'https://epaypool.com';
+      url = 'https://epaypool.com/graphql';
     } else {
-      url = 'https://xcht.epaypool.com';
+      url = 'https://xcht.epaypool.com/graphql';
     }
   }
   logger.debug('Using %s endpoint', url);
@@ -109,6 +112,7 @@ async function processPlots(harvester_key: string, monitor: Harvester) {
 }
 
 async function main() {
+  debug('init debug');
   logger.info('Starting version 1.0.0');
   await loadEnv(); // Executed synchronously before the rest of your app loads
 
@@ -141,17 +145,16 @@ async function main() {
 
   try {
     const monitor = new Harvester({ conn, origin: 'chia-plots-monitor' }, env.CHIA_ROOT);
+    setInterval(function () {
+      processPlots(harvester_key, monitor);
+    }, 10 * 60 * 1000);
     await monitor.init();
     await processPlots(harvester_key, monitor);
-    logger.info('connected');
     conn.onMessage(async (message: Message) => {
       if (message.command === 'get_plots') {
         await processPlots(harvester_key, monitor);
       }
     });
-    setInterval(function () {
-      processPlots(harvester_key, monitor);
-    }, 10 * 60 * 1000);
   } catch (error) {
     // Sentry.captureException(error);
     logger.error('error %s', error.toString());

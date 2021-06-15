@@ -1,6 +1,7 @@
 import pino from 'pino';
 
 const logger: pino.Logger = pino({
+  name: 'plots-monitor',
   level: 'debug',
   prettyPrint: {
     ignore: 'pid,hostname',

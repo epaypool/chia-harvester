@@ -8,7 +8,7 @@ export const schema = {
   EPAYPOOL_GRAPHQL: { type: String, default: '' },
   NODE_ENV: { type: String, default: 'development' },
   CHIA_ROOT: { type: String, default: '/root/.chia/mainnet/' },
-  CHIA_HOST: { type: String, default: 'harvester' },
+  CHIA_HOST: { type: String, default: 'localhost' },
   CHIA_PORT: { type: Number, default: 55400 },
   KEYCLOAK_DOMAIN: { type: String, default: 'https://auth.epaypool.com/auth/realms/epaypool.com' },
 };

@@ -5,6 +5,7 @@ export const schema = {
   EPAYPOOL_USER: String,
   EPAYPOOL_PASSWORD: String,
   EPAYPOOL_HARVESTER_NAME: { type: String, default: 'unknown' },
+  EPAYPOOL_GRAPHQL: { type: String, default: '' },
   NODE_ENV: { type: String, default: 'development' },
   CHIA_ROOT: { type: String, default: '/root/.chia/mainnet/' },
   CHIA_HOST: { type: String, default: 'harvester' },

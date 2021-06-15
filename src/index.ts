@@ -1,15 +1,14 @@
-import { Connection, Harvester, Message, PlotsResponse, SERVICE } from '@epaypool/chia-client';
+import { Connection, Harvester, Message, SERVICE } from '@epaypool/chia-client';
+import { getChiaConfig } from '@epaypool/chia-client/dist/src/ChiaNodeUtils';
 // import * as Sentry from '@sentry/node';
 import * as crypto from 'crypto';
-import Debug from 'debug';
 import * as fs from 'fs';
 import { readFileSync } from 'fs';
 import { GraphQLClient } from 'graphql-request';
 import KcAdminClient from 'keycloak-admin';
 import { env, loadEnv } from './env';
 import { getSdk, InputPlot, InputPlots } from './generated.graphql';
-
-const debug = Debug('epaypool:index.ts');
+import { logger } from './logger';
 
 // if (process.env.NODE_ENV === 'production')
 // {
@@ -51,7 +50,9 @@ function harvesterKey(filename: string) {
   return shasum.digest('hex');
 }
 
-async function processPlots(harvester_key: string, plots: PlotsResponse) {
+async function processPlots(harvester_key: string, monitor: Harvester) {
+  const plots = await monitor.getPlots();
+
   const baseUrl = 'https://auth.epaypool.com/auth';
   const kcAdminClient = new KcAdminClient({ baseUrl, realmName: 'epaypool.com' });
 
@@ -63,14 +64,25 @@ async function processPlots(harvester_key: string, plots: PlotsResponse) {
       clientId: 'epaypool.com',
     });
   } catch (error) {
-    debug('keycloak login failed with Status %o', error.toString());
-    throw new Error('Failed to authentication. Please check your EPAYPOOL_USER and EPAYPOOL_PASSWORD');
+    logger.error('KEYCLOAK LOGIN FAILED WITH STATUS %o', error.toString());
+    throw new Error(
+      'Please check your EPAYPOOL_USER and EPAYPOOL_PASSWORD. Visit: https://wiki.epaypool.com/troubleshooting:harvester#keycloak'
+    );
   }
 
   const token = await kcAdminClient.getAccessToken();
-  debug('token=', token);
 
-  const client = new GraphQLClient('http://localhost:8888/graphql', {
+  let url = env.EPAYPOOL_GRAPHQL;
+  if (url === '') {
+    const chiaConfig = getChiaConfig(env.CHIA_ROOT);
+    if (chiaConfig.selected_network === 'mainnet') {
+      url = 'https://epaypool.com';
+    } else {
+      url = 'https://xcht.epaypool.com';
+    }
+  }
+  logger.debug('Using %s endpoint', url);
+  const client = new GraphQLClient(url, {
     headers: {
       authorization: token ? `Bearer ${token}` : '',
     },
@@ -91,19 +103,20 @@ async function processPlots(harvester_key: string, plots: PlotsResponse) {
     };
     inputPlots.plots.push(plot);
   }
+  logger.info('Sending information about %d plots', inputPlots.plots.length);
   const res = await getSdk(client).addHarvesterPlots({ data: inputPlots });
-  debug('Total plots added for user = ', res);
+  logger.info('Total new plots added %o', res);
 }
 
 async function main() {
-  debug('Starting version 1.0');
+  logger.info('Starting version 1.0.0');
   await loadEnv(); // Executed synchronously before the rest of your app loads
 
   const timeoutInSeconds = 30;
   const certFileName = `${env.CHIA_ROOT}config/ssl/daemon/private_daemon.crt`;
   const keyFileName = `${env.CHIA_ROOT}config/ssl/daemon/private_daemon.key`;
   const harvester_key = await harvesterKey(`${env.CHIA_ROOT}config/ssl/harvester/private_harvester.crt`);
-  debug('harvester_key = %s', harvester_key);
+  logger.info('harvester_key = %s', harvester_key);
 
   const conn = new Connection(
     `${env.CHIA_HOST}:${env.CHIA_PORT}`,
@@ -115,8 +128,8 @@ async function main() {
     timeoutInSeconds
   );
   conn.onError((error) => {
-    debug(
-      'Monitor failed to connect to Harvester onError=%s. Sleep for %d seconds...',
+    logger.error(
+      'FAILED TO CONNECT TO HARVESTER: %s. Sleep for %d seconds... Visit https://wiki.epaypool.com/troubleshooting:harvester#harvester',
       error.toString(),
       timeoutInSeconds
     );
@@ -124,34 +137,24 @@ async function main() {
 
   conn.addService(SERVICE.walletUi);
   conn.addService(SERVICE.daemon);
-  conn.onMessage(async (message: Message) => {
-    if (
-      // message.command !== 'register_service' &&
-      // message.command !== 'get_connections' &&
-      // message.command !== 'get_plots' &&
-      message.command !== 'get_blockchain_state'
-    ) {
-      // debug('onMessage: %j', message);
-    }
-  });
-  // try {
-  //   const harvester = new Harvester( { conn, origin: 'my-service'}, env.CHIA_ROOT);
-  //   await harvester.init();
-  //   const plots = await harvester.getPlots();
-  //   harvester.onGetPlots((message) => {
-  //       debug('plots=%o', message);
-  //   })
+  conn.addService(SERVICE.wallet);
+
   try {
-    const monitor = new Harvester({ conn, origin: 'my-cool-service' }, env.CHIA_ROOT);
+    const monitor = new Harvester({ conn, origin: 'chia-plots-monitor' }, env.CHIA_ROOT);
     await monitor.init();
-    debug('connected');
-    const plots = await monitor.getPlots();
-    debug('total plots=%o', plots.plots.length);
-    await processPlots(harvester_key, plots);
-    debug('finished');
+    await processPlots(harvester_key, monitor);
+    logger.info('connected');
+    conn.onMessage(async (message: Message) => {
+      if (message.command === 'get_plots') {
+        await processPlots(harvester_key, monitor);
+      }
+    });
+    setInterval(function () {
+      processPlots(harvester_key, monitor);
+    }, 10 * 60 * 1000);
   } catch (error) {
     // Sentry.captureException(error);
-    debug('error=%o', error);
+    logger.error('error %s', error.toString());
     await conn.close();
   }
 }

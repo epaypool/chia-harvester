@@ -9,7 +9,7 @@ version: '3.4'
 
 services:
   harvester:
-   image: epaypool/chia-harvester
+   image: epaypool/chia-harvester:latest
     environment:
       - LOG_LEVEL=INFO
       - EPAYPOOL_HARVESTER_NAME=<your_harvester_name>

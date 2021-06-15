@@ -3,6 +3,8 @@ FROM epaypool/chia-blockchain:latest AS runner
 RUN curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
+ADD ./ca ./ca
+
 COPY entrypoint.sh ./
 COPY ./src/ ./monitor/src/
 COPY package.json package-lock.json tsconfig.json codegen.yml ./monitor/

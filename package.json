@@ -1,6 +1,6 @@
 {
   "name": "@epaypool/chia-plots-monitor",
-  "description": "Monitor chia plots in database",
+  "description": "Harvester with plots monitor",
   "author": "Eapypool Admin <info@epaypool.com>",
   "license": "MIT",
   "private": true,

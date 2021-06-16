@@ -1,6 +1,6 @@
-FROM epaypool/chia-blockchain:latest AS runner
+FROM epaypool/chia-blockchain:latest AS builder
 
-RUN curl -fsSL https://deb.nodesource.com/setup_15.x | sudo -E bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 RUN apt-get install -y nodejs
 
 ADD ./ca ./ca
@@ -13,4 +13,9 @@ RUN cd monitor && npm install && npm run build
 ENV NODE_ENV production
 RUN cd monitor && npm install
 
-ENTRYPOINT ["bash", "./entrypoint.sh"]
+FROM nikolaik/python-nodejs:python3.9-nodejs16-alpine as runner
+WORKDIR /chia-blockchain/
+
+COPY --from=builder /chia-blockchain/ /chia-blockchain/
+
+ENTRYPOINT ["/bin/sh", "./entrypoint.sh"]

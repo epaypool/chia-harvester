@@ -1,4 +1,4 @@
-import { Connection, Harvester, Message, SERVICE } from '@epaypool/chia-client';
+import { Connection, Harvester, Message, PlotsResponse, SERVICE } from '@epaypool/chia-client';
 import { getChiaConfig } from '@epaypool/chia-client/dist/src/ChiaNodeUtils';
 // import * as Sentry from '@sentry/node';
 import * as crypto from 'crypto';
@@ -141,7 +141,6 @@ async function main() {
 
   conn.addService(SERVICE.walletUi);
   conn.addService(SERVICE.daemon);
-  conn.addService(SERVICE.wallet);
 
   try {
     const monitor = new Harvester({ conn, origin: 'chia-plots-monitor' }, env.CHIA_ROOT);
@@ -149,9 +148,13 @@ async function main() {
       processPlots(harvester_key, monitor);
     }, 10 * 60 * 1000);
     await monitor.init();
-    await processPlots(harvester_key, monitor);
+    conn.onConnected(() => {
+      processPlots(harvester_key, monitor);
+    });
     conn.onMessage(async (message: Message) => {
       if (message.command === 'get_plots') {
+        const data: PlotsResponse = message.data;
+        logger.info('New plot just was added as we have message from harvester %d', data.plots.length);
         await processPlots(harvester_key, monitor);
       }
     });

@@ -18,7 +18,7 @@
     "setup": "npip install && husky install && graphql-codegen"
   },
   "dependencies": {
-    "@epaypool/chia-client": "^1.0.2",
+    "@epaypool/chia-client": "^1.0.3",
     "@sentry/node": "^6.7.1",
     "@sentry/tracing": "^6.7.1",
     "crypto": "^1.0.1",

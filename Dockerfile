@@ -9,6 +9,8 @@ RUN cd monitor && npm install
 
 FROM epaypool/chia-blockchain:latest AS runner
 
+VOLUME /root/.chia
+
 ADD ./ca ./ca
 
 COPY entrypoint.sh ./

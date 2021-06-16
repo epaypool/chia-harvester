@@ -146,7 +146,7 @@ async function main() {
     const monitor = new Harvester({ conn, origin: 'chia-plots-monitor' }, env.CHIA_ROOT);
     setInterval(function () {
       processPlots(harvester_key, monitor);
-    }, 10 * 60 * 1000);
+    }, env.REFRESH_TIMEOUT_SECS * 1000);
     await monitor.init();
     conn.onConnected(() => {
       processPlots(harvester_key, monitor);

@@ -11,6 +11,7 @@ export const schema = {
   CHIA_HOST: { type: String, default: 'localhost' },
   CHIA_PORT: { type: Number, default: 55400 },
   KEYCLOAK_DOMAIN: { type: String, default: 'https://auth.epaypool.com/auth/realms/epaypool.com' },
+  REFRESH_TIMEOUT_SECS: { type: Number, default: 10 * 60 },
 };
 
 export type Env = EnvType<typeof schema>;

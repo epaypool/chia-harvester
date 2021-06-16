@@ -17,7 +17,10 @@ services:
       - EPAYPOOL_PASSWORD=<password>
       - plots_dir=/plot1
     volumes:
+      - chia:/root/.chia
       - /your/local/plots/folder:/plot1
+volumes:
+  chia:
 ```
 
 ## Technologies

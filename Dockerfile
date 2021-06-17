@@ -5,11 +5,11 @@ COPY package.json package-lock.json tsconfig.json codegen.yml ./monitor/
 RUN ls -al ./monitor/
 RUN cd monitor && npm install && npm run build
 ENV NODE_ENV production
-ENV LOG_LEVEL=INFO
 RUN cd monitor && npm install
 
 FROM epaypool/chia-blockchain:latest AS runner
 
+ENV LOG_LEVEL=INFO
 VOLUME /root/.chia
 
 ADD ./ca ./ca

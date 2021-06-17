@@ -15,10 +15,11 @@ services:
       - EPAYPOOL_HARVESTER_NAME=<your_harvester_name>
       - EPAYPOOL_USER=<user>
       - EPAYPOOL_PASSWORD=<password>
-      - plots_dir=/plot1
+      - plots_dir=/plot1 /plot2
     volumes:
       - chia:/root/.chia
-      - /your/local/plots/folder:/plot1
+      - /your/local/plots/folder1:/plot1
+      - /your/local/plots/folder2:/plot2
 volumes:
   chia:
 ```

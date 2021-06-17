@@ -113,7 +113,7 @@ async function processPlots(harvester_key: string, monitor: Harvester) {
 
 async function main() {
   debug('init debug');
-  logger.info('Starting version 1.0.0');
+  logger.info('Starting version 1.1.0');
   await loadEnv(); // Executed synchronously before the rest of your app loads
 
   const timeoutInSeconds = 30;

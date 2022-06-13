@@ -36,7 +36,7 @@
     "@graphql-codegen/cli": "^1.21.5",
     "@graphql-codegen/introspection": "1.18.2",
     "@graphql-codegen/schema-ast": "^1.18.3",
-    "@graphql-codegen/typescript": "1.22.1",
+    "@graphql-codegen/typescript": "2.5.1",
     "@graphql-codegen/typescript-graphql-request": "^3.2.1",
     "@graphql-codegen/typescript-operations": "^1.18.0",
     "@types/debug": "^4.1.5",

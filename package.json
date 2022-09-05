@@ -27,7 +27,7 @@
     "graphql-tag": "^2.12.4",
     "keycloak-admin": "^1.14.17",
     "node-fetch": "^2.6.1",
-    "pino": "^6.11.3",
+    "pino": "^8.5.0",
     "pino-pretty": "^5.0.2",
     "ts-dotenv": "^0.8.3"
   },

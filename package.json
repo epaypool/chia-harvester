@@ -29,7 +29,7 @@
     "node-fetch": "^2.6.1",
     "pino": "^6.11.3",
     "pino-pretty": "^5.0.2",
-    "ts-dotenv": "^0.8.3"
+    "ts-dotenv": "^0.9.0"
   },
   "devDependencies": {
     "@epaypool/eslint-config-ts": "^1.0.4",

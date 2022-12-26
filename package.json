@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@epaypool/chia-client": "^1.0.3",
-    "@sentry/node": "^6.7.1",
+    "@sentry/node": "^7.28.1",
     "@sentry/tracing": "^6.7.1",
     "crypto": "^1.0.1",
     "debug": "^4.3.1",
